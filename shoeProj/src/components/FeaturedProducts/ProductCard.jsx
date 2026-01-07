@@ -1,5 +1,6 @@
 import ProductRating from "./ProductRating";
 
+
 const ProductCard = ({ product }) => {
     return (
         <div className="product-card">

@@ -1,30 +1,52 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 import DashboardHeader from "../components/DashboardHeader";
-import Footer from "../components/Footer/Footer";
 
 const Orders = () => {
+    const { token } = useAuth();
+    const [orders, setOrders] = useState([]);
+
+    useEffect(() => {
+        axios
+            .get("http://localhost:5000/api/orders", {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            .then(res => setOrders(res.data))
+            .catch(err => console.error("Failed to fetch orders:", err));
+    }, [token]);
+
     return (
         <>
             <DashboardHeader />
-
             <div className="container my-5">
                 <h2 className="mb-4">Orders</h2>
 
-                <div
-                    className="bg-light rounded d-flex flex-column justify-content-center align-items-center"
-                    style={{ minHeight: "220px" }}
-                >
-                    <h6>No orders yet</h6>
-                    <p className="text-muted mb-0">
-                        Go to store to place an order.
-                    </p>
-                </div>
-            </div>
+                {orders.length === 0 && <p>No orders yet</p>}
 
-            <Footer />
+                {orders.map(order => (
+                    <div key={order._id} className="card mb-3">
+                        <div className="card-body">
+                            {order.items.map(item => (
+                                <div key={item.productId} className="d-flex gap-3 mb-2">
+                                    <img src={item.image} width="60" alt={item.name} />
+                                    <div>
+                                        <p className="mb-0">{item.name}</p>
+                                        <small>Qty: {item.quantity}</small>
+                                    </div>
+                                </div>
+                            ))}
+                            <strong>Total: ₦{order.totalAmount.toLocaleString()}</strong>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </>
     );
 };
 
 export default Orders;
+
+
 
 

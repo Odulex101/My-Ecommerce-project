@@ -1,0 +1,22 @@
+.star {
+    font-size: 28px;
+    cursor: pointer;
+    color: #ccc;
+}
+
+.star.active {
+    color: #ffc107;
+}
+
+.review-form {
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+}
+
+.preview-box button {
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    line-height: 1;
+}

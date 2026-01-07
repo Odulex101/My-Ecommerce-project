@@ -7,6 +7,9 @@ import fs from "fs";
 import authRoutes from "./routes/authRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
+import adminOrderRoutes from "./routes/adminOrderRoutes.js";
+import customerCareRoutes from "./routes/customerCareRoutes.js";
 
 dotenv.config();
 
@@ -18,6 +21,10 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/admin/orders", adminOrderRoutes);
+app.use("/api/customer-care", customerCareRoutes);
+
 
 app.get("/", (req, res) => res.send("API running ✅"));
 

@@ -8,6 +8,8 @@ const userSchema = new mongoose.Schema(
         dateOfBirth: Date,
         verificationCode: String,
         codeExpires: Date,
+
+        verified: { type: Boolean, default: false }
     },
     { timestamps: true }
 );

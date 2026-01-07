@@ -1,28 +1,3 @@
-// import mongoose from "mongoose";
-// import dotenv from "dotenv";
-// import fs from "fs";
-// import app from "./app.js";
-
-// dotenv.config();
-
-// /* DEBUGGING */
-// console.log("Current dir:", process.cwd());
-// console.log("Env file exists:", fs.existsSync(".env"));
-// console.log("EMAIL_USER after config:", process.env.EMAIL_USER);
-
-// /* DB + SERVER */
-// mongoose
-//     .connect(process.env.MONGO_URI)
-//     .then(() => {
-//         console.log("MongoDB connected");
-
-//         app.listen(5000, () =>
-//             console.log("Server running on port 5000")
-//         );
-//     })
-//     .catch((err) => console.error("Mongo error:", err));
-
-
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import fs from "fs";

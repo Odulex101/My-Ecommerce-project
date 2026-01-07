@@ -1,80 +1,10 @@
-// import express from "express";
-// import Cart from "../models/Cart.js";
-// import authMiddleware from "../middleware/authMiddleware.js";
-
-// const router = express.Router();
-
-// /* ===============================
-//    GET USER CART
-// =============================== */
-// router.get("/", authMiddleware, async (req, res) => {
-//     let cart = await Cart.findOne({ userId: req.userId });
-
-//     if (!cart) {
-//         cart = await Cart.create({ userId: req.userId, items: [] });
-//     }
-
-//     res.json(cart);
-// });
-
-// /* ===============================
-//    ADD ITEM TO CART
-// =============================== */
-// router.post("/add", authMiddleware, async (req, res) => {
-//     const { product } = req.body;
-
-//     let cart = await Cart.findOne({ userId: req.userId });
-
-//     if (!cart) {
-//         cart = new Cart({
-//             userId: req.userId,
-//             items: [{ ...product, quantity: 1 }],
-//         });
-//     } else {
-//         const existing = cart.items.find(
-//             (item) => item.productId === product.productId
-//         );
-
-//         if (existing) {
-//             existing.quantity += 1;
-//         } else {
-//             cart.items.push({ ...product, quantity: 1 });
-//         }
-//     }
-
-//     await cart.save();
-//     res.json(cart);
-// });
-
-// /* ===============================
-//    REMOVE ITEM
-// =============================== */
-// router.delete("/:productId", authMiddleware, async (req, res) => {
-//     const cart = await Cart.findOne({ userId: req.userId });
-
-//     if (!cart) return res.status(404).json({ message: "Cart not found" });
-
-//     cart.items = cart.items.filter(
-//         (item) => item.productId !== Number(req.params.productId)
-//     );
-
-//     await cart.save();
-//     res.json(cart);
-// });
-
-// export default router;
-
-
-
 import express from "express";
 import Cart from "../models/Cart.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-/* ===============================
-   GET USER CART
-=============================== */
+/* GET CART */
 router.get("/", authMiddleware, async (req, res) => {
     let cart = await Cart.findOne({ userId: req.userId });
 
@@ -85,28 +15,38 @@ router.get("/", authMiddleware, async (req, res) => {
     res.json(cart);
 });
 
-/* ===============================
-   ADD ITEM TO CART
-=============================== */
+/* ADD ITEM */
 router.post("/add", authMiddleware, async (req, res) => {
     const { product } = req.body;
 
+    if (!product || product.price == null) {
+        return res.status(400).json({ message: "Product price is missing" });
+    }
+
     let cart = await Cart.findOne({ userId: req.userId });
+
+    const cleanProduct = {
+        productId: Number(product.productId),
+        name: product.name,
+        price: Number(product.price),
+        image: product.image,
+        quantity: 1,
+    };
 
     if (!cart) {
         cart = new Cart({
             userId: req.userId,
-            items: [{ ...product, quantity: 1 }],
+            items: [cleanProduct],
         });
     } else {
         const existing = cart.items.find(
-            (item) => item.productId === product.productId
+            item => item.productId === cleanProduct.productId
         );
 
         if (existing) {
             existing.quantity += 1;
         } else {
-            cart.items.push({ ...product, quantity: 1 });
+            cart.items.push(cleanProduct);
         }
     }
 
@@ -114,25 +54,20 @@ router.post("/add", authMiddleware, async (req, res) => {
     res.json(cart);
 });
 
-/* ===============================
-   REMOVE ITEM
-=============================== */
+/* REMOVE ITEM */
 router.delete("/:productId", authMiddleware, async (req, res) => {
     const cart = await Cart.findOne({ userId: req.userId });
-
     if (!cart) return res.status(404).json({ message: "Cart not found" });
 
     cart.items = cart.items.filter(
-        (item) => item.productId !== Number(req.params.productId)
+        item => item.productId !== Number(req.params.productId)
     );
 
     await cart.save();
     res.json(cart);
 });
 
-/* ===============================
-   UPDATE ITEM QUANTITY
-=============================== */
+/* UPDATE QUANTITY */
 router.put("/update", authMiddleware, async (req, res) => {
     const { productId, quantity } = req.body;
 
@@ -145,7 +80,7 @@ router.put("/update", authMiddleware, async (req, res) => {
 
     cart.items = cart.items.map(item =>
         item.productId === productId
-            ? { ...item, quantity } // update quantity
+            ? { ...item, quantity }
             : item
     );
 
